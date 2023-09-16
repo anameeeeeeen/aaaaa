@@ -1,5 +1,5 @@
 const express = require("express");
-const connectDB = require("./config/connectDB");
+const mongoose = require("mongoose")
 const xss = require("xss-clean")
 const rateLimiting = require("express-rate-limit");
 const helmet = require("helmet");
@@ -8,9 +8,17 @@ const { errorHandler, notFound } = require("./middlewares/error");
 const cors = require("cors");
 require("dotenv").config();
 
-//connect to DB
-connectDB();
-
+mongoose
+  .connect(
+    "mongodb+srv://omar:omar@cluster0.f9ottjh.mongodb.net/BlogApp?retryWrites=true&w=majority")
+  .then((result) => {
+    app.listen(8000, () => {
+      console.log(`http://localhost:8000`);
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 // init app
 const app = express();
 
@@ -60,10 +68,5 @@ app.use("/api/password",require("./routes/passwordRoute"));
 app.use(notFound);
 app.use(errorHandler);
 
-//running server 
-const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => 
-  console.log(
-    `http://localhost:${process.env.PORT}`
-  )
+
 );
